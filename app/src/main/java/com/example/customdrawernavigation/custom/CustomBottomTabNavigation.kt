@@ -1,5 +1,7 @@
 package com.example.customdrawernavigation.custom
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -41,7 +43,6 @@ fun CustomBottomTabNavigation(
         mutableIntStateOf(0)
     }
 
-    val scaleValue by animateFloatAsState(targetValue = 3f)
 
     Row(
         modifier = Modifier
@@ -54,6 +55,9 @@ fun CustomBottomTabNavigation(
     ) {
 
         list.forEachIndexed { index, customNavigationItem ->
+            val scaleValue by animateFloatAsState(targetValue = if(selectedIndex == index) 3f else 1f)
+            val animatedColor by animateColorAsState(targetValue = if(selectedIndex == index) Color.Blue.copy(0.9f) else Color.Transparent)
+            val animateSpacer by animateDpAsState(targetValue = if(selectedIndex == index) 28.dp else 0.dp)
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -61,24 +65,27 @@ fun CustomBottomTabNavigation(
                         selectedIndex = index
                     }, horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if (selectedIndex == index) {
+//                if (selectedIndex == index) {
                     Column(
-                        modifier = Modifier, horizontalAlignment = Alignment.CenterHorizontally
+                        modifier = Modifier, horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
                     ) {
                         Column(
                             modifier = Modifier
                                 .scale(scaleValue)
                                 .clip(RoundedCornerShape(50))
-                                .background(Color.LightGray)
-                                .padding(0.7.dp)
+                                .background(if (selectedIndex == index) Color.LightGray else Color.Transparent)
+                                .padding(0.7.dp),
+                            verticalArrangement = Arrangement.Center
                         ) {
                             Column(
                                 modifier = Modifier
 //                                    .scale(4f)
 //                                    .padding(6.dp)
                                     .clip(RoundedCornerShape(50))
-                                    .background(Color.Blue.copy(0.9f))
-                                    .padding(2.dp)
+                                    .background(animatedColor)
+                                    .padding(2.dp),
+                                verticalArrangement = Arrangement.Center
 
                             ) {
 
@@ -93,18 +100,18 @@ fun CustomBottomTabNavigation(
 
                             }
                         }
-                        Spacer(modifier = Modifier.height(28.dp))
+                        Spacer(modifier = Modifier.height(animateSpacer))
                         Text(text = customNavigationItem.title, color = Color.White)
                     }
-                } else {
-
-                    Icon(
-                        imageVector = customNavigationItem.icon,
-                        contentDescription = "",
-                        tint = Color.White
-                    )
-
-                }
+//                } else {
+//
+//                    Icon(
+//                        imageVector = customNavigationItem.icon,
+//                        contentDescription = "",
+//                        tint = Color.White
+//                    )
+//
+//                }
             }
         }
     }
